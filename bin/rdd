@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+require 'optparse/date'
+
+program :version, '0.0.1'
+program :description, 'Resume Driven Development Challenge'
+
+global_option '--before [DATE]', Date,    'Date to start search at, ISO8601 or YYYY-MM-DD format. Default: 28 days ago'
+global_option '--after [DATE]',  Date,    'Date to end search at, ISO8601 or YYYY-MM-DD format. Default: Now'
+global_option '--top [NUMBER]',  Integer, 'The number of repos to show. Default: 20'
+
+command :perform do |c|
+  c.syntax      = 'rdd perform [options]'
+  c.description = 'Find popular repos'
+  c.example       'Find and prints your popular repos', 'rdd perform'
+  c.action do |args, options|
+    options.default before: 28.days.ago, after: now
+  end
+end
+
+default_command :perform
