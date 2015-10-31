@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'commander'
 gem 'activesupport'
 gem 'bigquery'
+gem 'dotenv'
 
 group :test do
   gem 'minitest',       require: false

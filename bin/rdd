@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
 
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'rubygems'
 require 'commander/import'
 require 'optparse/date'
+require 'rdd/commands/perform'
+require 'active_support/time'
 
 program :version, '0.0.1'
 program :description, 'Resume Driven Development Challenge'
@@ -16,7 +19,9 @@ command :perform do |c|
   c.description = 'Find popular repos'
   c.example       'Find and prints your popular repos', 'rdd perform'
   c.action do |args, options|
-    options.default before: 28.days.ago, after: now
+    options.default before: DateTime.now - 28, after: DateTime.now, top: 20
+    command = RDD::Commands::Perform.new(before: options.before, after: options.after, top: options.top)
+    command.execute
   end
 end
 
