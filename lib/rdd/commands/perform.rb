@@ -46,8 +46,8 @@ FROM
     SELECT type, repo.name as repo_name,
     FROM
     (TABLE_DATE_RANGE([githubarchive:day.events_],
-      TIMESTAMP('#{before.to_s}'),
-      TIMESTAMP('#{after.to_s}'))
+      TIMESTAMP('#{after.to_s}'),
+      TIMESTAMP('#{before.to_s}'))
     )
     WHERE type in ('CreateEvent', 'ForkEvent', 'MemberEvent', 'PullRequestEvent', 'WatchEvent', 'IssuesEvent')
   )
