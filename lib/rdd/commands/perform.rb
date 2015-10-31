@@ -55,13 +55,14 @@ GROUP BY repo_name
 LIMIT #{top}"
 
         begin
+          puts "Getting Github statistics for #{after} - #{before}"
+
           start_time = Time.now
           response   = @data_provider.query(query)
           end_time   = Time.now
 
           repos_and_scores = parse_data_provider_response(response)
 
-          puts "Getting Github statistics for #{after} - #{before}"
           puts "Results (~#{(end_time - start_time).to_i} seconds):"
 
           repos_and_scores.each do |repo, score|
