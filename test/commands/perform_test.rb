@@ -18,8 +18,8 @@ module RDD::Commands
         "rows" => [
           {
             "f" => [
-              { "v" => "rxantos/tubras" },
-              { "v" => "20" }
+              { "v" => "Gooru/Gooru-Core-API" },
+              { "v" => "280" }
             ]
           },
           {
@@ -34,8 +34,8 @@ module RDD::Commands
             ]},
           {
             "f" => [
-              { "v" => "Gooru/Gooru-Core-API" },
-              { "v" => "280" }
+              { "v" => "rxantos/tubras" },
+              { "v" => "20" }
             ]
           }
         ]
@@ -45,7 +45,7 @@ module RDD::Commands
 
       data_provider.stub(:query, response) do
         repos = command.execute
-        assert_equal({"rxantos/tubras"=>"20", "ElementalKiss/Test"=>"221", "stackwalker/docker-test"=>"20", "Gooru/Gooru-Core-API"=>"280"}, repos)
+        assert_equal({"Gooru/Gooru-Core-API"=>"280", "ElementalKiss/Test"=>"221", "stackwalker/docker-test"=>"20", "rxantos/tubras"=>"20"}, repos)
       end
     end
   end

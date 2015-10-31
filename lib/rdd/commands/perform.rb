@@ -43,15 +43,19 @@ SELECT repo_name,
     END) as sum
 FROM
   (
-    SELECT type, repo.name as repo_name,
+    SELECT type,
+           repo.name as repo_name
     FROM
     (TABLE_DATE_RANGE([githubarchive:day.events_],
       TIMESTAMP('#{after.to_s}'),
       TIMESTAMP('#{before.to_s}'))
     )
-    WHERE type in ('CreateEvent', 'ForkEvent', 'MemberEvent', 'PullRequestEvent', 'WatchEvent', 'IssuesEvent')
+    WHERE
+      (type='CreateEvent' AND JSON_EXTRACT(payload, '$.ref_type')='repository')
+      OR type in ('ForkEvent', 'MemberEvent', 'PullRequestEvent', 'WatchEvent', 'IssuesEvent')
   )
 GROUP BY repo_name
+ORDER BY sum DESC
 LIMIT #{top}"
 
         begin
