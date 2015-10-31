@@ -5,7 +5,13 @@ Dotenv.load
 module RDD
   module Commands
     class Perform
-      attr_reader :before, :after, :top, :data_provider
+      attr_reader :before, :after, :top, :data_provider, :logger
+
+      class PlainTextLogger
+        def info(message)
+          puts message
+        end
+      end
 
       module Scores
         NEW_REPO     = 10
@@ -23,11 +29,12 @@ module RDD
         'dataset'       => ENV['BIG_QUERY_DATASET'],
       }
 
-      def initialize(before:, after:, top:, data_provider: BigQuery::Client.new(BIG_QUERY_OPTIONS))
+      def initialize(before:, after:, top:, data_provider: BigQuery::Client.new(BIG_QUERY_OPTIONS), logger: PlainTextLogger.new )
         @before        = before
         @after         = after
         @top           = top
         @data_provider = data_provider
+        @logger        = logger
       end
 
       def execute
@@ -59,7 +66,7 @@ ORDER BY sum DESC
 LIMIT #{top}"
 
         begin
-          puts "Getting Github statistics for #{after} - #{before}"
+          log("Getting Github statistics for #{after} - #{before}")
 
           start_time = Time.now
           response   = @data_provider.query(query)
@@ -67,14 +74,20 @@ LIMIT #{top}"
 
           repos_and_scores = parse_data_provider_response(response)
 
-          puts "Results (~#{(end_time - start_time).to_i} seconds):"
+          log("Results (~#{(end_time - start_time).to_i} seconds):")
 
           repos_and_scores.each do |repo, score|
-            puts "#{repo} - #{score} points"
+            log("#{repo} - #{score} points")
           end
         rescue BigQuery::Errors::BigQueryError => e
           raise RuntimeError.new("Failed to query a data provider: #{e.message}")
         end
+      end
+
+      private
+
+      def log(message)
+        logger.info(message)
       end
 
       def parse_data_provider_response(response)
