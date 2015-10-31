@@ -18,14 +18,14 @@ module RDD::Commands
         "rows" => [
           {
             "f" => [
-              {"v" => "rxantos/tubras"},
-              {"v"=>"20"}
+              { "v" => "rxantos/tubras" },
+              { "v" => "20" }
             ]
           },
           {
             "f" => [
-              {"v" => "ElementalKiss/Test" },
-              {"v"=>"221"}
+              { "v" => "ElementalKiss/Test" },
+              { "v" => "221" }
             ]},
           {
             "f" => [
