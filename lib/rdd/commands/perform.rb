@@ -38,8 +38,32 @@ module RDD
       end
 
       def execute
-        query = "
-SELECT repo_name,
+        log("Getting Github statistics for #{after} - #{before}")
+        start_time, response, end_time = query_data_provider
+
+        log("Results (~#{(end_time - start_time).to_i} seconds):")
+        repos_and_scores = parse_data_provider_response(response)
+        repos_and_scores.each do |repo, score|
+          log("#{repo} - #{score} points")
+        end
+      end
+
+      private
+
+      def query_data_provider
+        begin
+          start_time = Time.now
+          response   = @data_provider.query(query)
+          end_time   = Time.now
+        rescue BigQuery::Errors::BigQueryError => e
+          raise RuntimeError.new("Failed to query a data provider: #{e.message}")
+        end
+
+        [start_time, response, end_time]
+      end
+
+      def query
+"SELECT repo_name,
   SUM (
     CASE
       WHEN type = 'CreateEvent' THEN #{Scores::NEW_REPO}
@@ -64,27 +88,7 @@ FROM
 GROUP BY repo_name
 ORDER BY sum DESC
 LIMIT #{top}"
-
-        begin
-          log("Getting Github statistics for #{after} - #{before}")
-
-          start_time = Time.now
-          response   = @data_provider.query(query)
-          end_time   = Time.now
-
-          repos_and_scores = parse_data_provider_response(response)
-
-          log("Results (~#{(end_time - start_time).to_i} seconds):")
-
-          repos_and_scores.each do |repo, score|
-            log("#{repo} - #{score} points")
-          end
-        rescue BigQuery::Errors::BigQueryError => e
-          raise RuntimeError.new("Failed to query a data provider: #{e.message}")
-        end
       end
-
-      private
 
       def log(message)
         logger.info(message)
